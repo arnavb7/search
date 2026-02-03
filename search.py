@@ -87,17 +87,72 @@ def depthFirstSearch(problem):
     print("Start's successors:", problem.getSuccessors(problem.getStartState()))
     """
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    # print("Start:", problem.getStartState())
+    # print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
+    # print("Start's successors:", problem.getSuccessors(problem.getStartState()))
 
+    fringe = util.Stack() # the dfs stack
+    discovered = {} # map of all discovered states and their paths to them
+    fringe.push((problem.getStartState(), []))
+    while not fringe.isEmpty():
+        current_state, current_path = fringe.pop()
+
+        if current_state in discovered:
+            continue
+        discovered[current_state] = current_path  # discover on pop
+
+        if problem.isGoalState(current_state):
+            return current_path
+
+        for successor_state, action, _ in problem.getSuccessors(current_state):
+            if successor_state not in discovered:
+                fringe.push((successor_state, current_path + [action])) # current_state + action = successor_state, create new array
+    return []
+        
+    
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    fringe = util.Queue() # the bfs queue
+    discovered = {} # map of all discovered states and their paths to them
+    fringe.push((problem.getStartState(), []))
+    while not fringe.isEmpty():
+        current_state, current_path = fringe.pop()
 
-def uniformCostSearch(problem):
+        if current_state in discovered:
+            continue
+        discovered[current_state] = current_path  # discover on pop
+
+        if problem.isGoalState(current_state):
+            return current_path
+
+        for successor_state, action, _ in problem.getSuccessors(current_state):
+            if successor_state not in discovered:
+                fringe.push((successor_state, current_path + [action])) # current_state + action = successor_state, create new array
+    return []
+
+def uniformCostSearch(problem): # basically bfs but with weighted costs
     """Search the node of least total cost first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    fringe = util.PriorityQueue() # the ucs priority queue
+    discovered = {} # map of all discovered states and their paths to them
+    fringe.push((problem.getStartState(), [], 0), 0)
+    while not fringe.isEmpty():
+        current_state, current_path, current_cost = fringe.pop()
+
+        if current_state in discovered:
+            continue
+        discovered[current_state] = current_path  # discover on pop
+
+        if problem.isGoalState(current_state):
+            return current_path
+
+        for successor_state, action, step_cost in problem.getSuccessors(current_state):
+            if successor_state not in discovered:
+                new_path = current_path + [action]
+                new_cost = current_cost + step_cost
+                fringe.push((successor_state, new_path, new_cost), new_cost) # current_state + action = successor_state, create new array
+    return []
 
 def nullHeuristic(state, problem=None):
     """
@@ -109,7 +164,26 @@ def nullHeuristic(state, problem=None):
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    fringe = util.PriorityQueue() # the aStar priority queue
+    discovered = {} # map of all discovered states and their paths to them
+    fringe.push((problem.getStartState(), [], 0), 0)
+    while not fringe.isEmpty():
+        current_state, current_path, current_cost = fringe.pop()
+
+        if current_state in discovered:
+            continue
+        discovered[current_state] = current_path  # discover on pop
+
+        if problem.isGoalState(current_state):
+            return current_path
+
+        for successor_state, action, step_cost in problem.getSuccessors(current_state):
+            if successor_state not in discovered:
+                new_path = current_path + [action]
+                new_cost = current_cost + step_cost
+                priority = new_cost + heuristic(successor_state, problem)
+                fringe.push((successor_state, new_path, new_cost), priority) # current_state + action = successor_state, create new array
+    return []
 
 
 # Abbreviations
