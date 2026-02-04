@@ -295,14 +295,17 @@ class CornersProblem(search.SearchProblem):
         space)
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        current_position = self.startingPosition
+        corners_visited = tuple([current_position]) if current_position in self.corners else tuple() # check if corner is starting position
+        return (current_position, corners_visited)
 
     def isGoalState(self, state):
         """
         Returns whether this search state is a goal state of the problem.
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        current_position, corners_visited = state
+        return len(corners_visited) == 4 # only add corner to visited if it's not already been visited, so simple == 4 check suffices
 
     def getSuccessors(self, state):
         """
@@ -316,6 +319,8 @@ class CornersProblem(search.SearchProblem):
         """
 
         successors = []
+        current_position, corners_visited = state
+        x, y = current_position
         for action in [Directions.NORTH, Directions.SOUTH, Directions.EAST, Directions.WEST]:
             # Add a successor state to the successor list if the action is legal
             # Here's a code snippet for figuring out whether a new position hits a wall:
@@ -325,8 +330,17 @@ class CornersProblem(search.SearchProblem):
             #   hitsWall = self.walls[nextx][nexty]
 
             "*** YOUR CODE HERE ***"
+            dx, dy = Actions.directionToVector(action)
+            nextx, nexty = int(x + dx), int(y + dy)
+            if not self.walls[nextx][nexty]:
+                successor_position = (nextx, nexty)
 
-        self._expanded += 1 # DO NOT CHANGE
+                if successor_position in self.corners and successor_position not in corners_visited:
+                    successor_corners_visited = corners_visited + tuple([successor_position])
+                else:
+                    successor_corners_visited = corners_visited
+                successors.append(((successor_position, successor_corners_visited), action, 1))
+        self._expanded += 1
         return successors
 
     def getCostOfActions(self, actions):
