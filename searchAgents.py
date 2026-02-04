@@ -374,7 +374,37 @@ def cornersHeuristic(state, problem):
     walls = problem.walls # These are the walls of the maze, as a Grid (game.py)
 
     "*** YOUR CODE HERE ***"
-    return 0 # Default to trivial solution
+    current_position, corners_visited = state
+    corners_to_visit = [corner for corner in corners if corner not in corners_visited]
+    if not corners_to_visit:
+        return 0
+    distance_to_closest_corner = None
+    for corner in corners_to_visit:
+        distance = util.manhattanDistance(current_position, corner)
+        if distance_to_closest_corner is None or distance < distance_to_closest_corner:
+            distance_to_closest_corner = distance
+    
+    if len(corners_to_visit) <= 1:
+        mst_cost = 0
+    else:
+        # Prim's algorithm: start with first corner, then for each corner in the tree, 
+        # find the closest unvisited one and add it to tree + update mst cost
+        corners_in_mst = {corners_to_visit[0]}
+        mst_cost = 0
+        while len(corners_in_mst) < len(corners_to_visit):
+            min_distance = None
+            min_corner = None
+            
+            for corner_in_tree in corners_in_mst:
+                for corner in corners_to_visit:
+                    if corner not in corners_in_mst:
+                        dist = util.manhattanDistance(corner_in_tree, corner)
+                        if min_distance is None or dist < min_distance:
+                            min_distance = dist
+                            min_corner = corner   
+            corners_in_mst.add(min_corner)
+            mst_cost += min_distance
+    return distance_to_closest_corner + mst_cost
 
 class AStarCornersAgent(SearchAgent):
     "A SearchAgent for FoodSearchProblem using A* and your foodHeuristic"
