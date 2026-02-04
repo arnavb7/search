@@ -529,7 +529,7 @@ class ClosestDotSearchAgent(SearchAgent):
         problem = AnyFoodSearchProblem(gameState)
 
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        return search.bfs(problem) # bfs because it's a shortest path position search problem
 
 class AnyFoodSearchProblem(PositionSearchProblem):
     """
@@ -565,7 +565,7 @@ class AnyFoodSearchProblem(PositionSearchProblem):
         x,y = state
 
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        return self.food[x][y] # check if boolean foodgrid is true at current position
 
 def mazeDistance(point1, point2, gameState):
     """
