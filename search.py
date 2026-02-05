@@ -104,7 +104,7 @@ def depthFirstSearch(problem):
         if problem.isGoalState(current_state):
             return current_path
 
-        for successor_state, action, _ in problem.getSuccessors(current_state):
+        for successor_state, action, step_cost in problem.getSuccessors(current_state):
             if successor_state not in discovered:
                 fringe.push((successor_state, current_path + [action])) # current_state + action = successor_state, create new array
     return []
@@ -126,7 +126,7 @@ def breadthFirstSearch(problem):
         if problem.isGoalState(current_state):
             return current_path
 
-        for successor_state, action, _ in problem.getSuccessors(current_state):
+        for successor_state, action, step_cost in problem.getSuccessors(current_state):
             if successor_state not in discovered:
                 fringe.push((successor_state, current_path + [action])) # current_state + action = successor_state, create new array
     return []
