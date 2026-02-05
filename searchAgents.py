@@ -496,9 +496,39 @@ def foodHeuristic(state, problem):
     Subsequent calls to this heuristic can access
     problem.heuristicInfo['wallCount']
     """
-    position, foodGrid = state
-    "*** YOUR CODE HERE ***"
-    return 0
+    current_position, foodGrid = state
+    food_coords = foodGrid.asList()
+    if not food_coords: # goal state
+        return 0
+    
+    distance_to_closest_food = None
+    for food_coord in food_coords:
+        distance = util.manhattanDistance(current_position, food_coord)
+        if distance_to_closest_food is None or distance < distance_to_closest_food:
+            distance_to_closest_food = distance
+
+
+    if len(food_coords) <= 1:
+        mst_cost = 0
+    else:
+        # Prim's algorithm: start with first food coord, then for each food coord in the tree,
+        # find the closest unvisited one and add it to tree + update mst cost
+        food_coords_in_mst = {food_coords[0]}
+        mst_cost = 0
+        while len(food_coords_in_mst) < len(food_coords):
+            min_distance = None
+            min_food_coord = None
+
+            for food_coord_in_tree in food_coords_in_mst:
+                for food_coord in food_coords:
+                    if food_coord not in food_coords_in_mst:
+                        dist = util.manhattanDistance(food_coord_in_tree, food_coord)
+                        if min_distance is None or dist < min_distance:
+                            min_distance = dist
+                            min_food_coord = food_coord
+            food_coords_in_mst.add(min_food_coord)
+            mst_cost += min_distance
+    return distance_to_closest_food + mst_cost
 
 class ClosestDotSearchAgent(SearchAgent):
     "Search for all food using a sequence of searches"
